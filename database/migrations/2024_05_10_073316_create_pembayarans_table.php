@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pembayarans', function (Blueprint $table) {
             $table->id();
-            $table->string('bukti_pembayaran');
+            $table->string('image');
             $table->timestamps();
         });
     }

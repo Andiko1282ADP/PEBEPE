@@ -14,7 +14,6 @@ class metode_pembayaran extends Model
         'jenis_pembayaran',
         'bank',
         'status',
-        'tanggal_pembayaran',
     ];
 
     public function pesanan()

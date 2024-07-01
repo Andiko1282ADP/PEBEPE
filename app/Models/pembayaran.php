@@ -11,7 +11,7 @@ class pembayaran extends Model
     protected $table = "pembayarans";
     protected $fillable =
     [
-        'bukti_pembayaran'
+        'image'
     ];
 
     public function pesanan()

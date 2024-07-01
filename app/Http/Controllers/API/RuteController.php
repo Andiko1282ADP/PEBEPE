@@ -47,7 +47,6 @@ class RuteController extends Controller
                 'kota_tujuan' => ['required', 'string'],
                 'jam_berangkat' => ['required', 'date'],
                 'jam_tiba' => ['required', 'date'],
-                'seat' => ['required', 'string'],
                 'tarif' => ['required', 'string'],
                 'titik_pemberangkatan' => ['required', 'string'],
             ]);
@@ -58,7 +57,6 @@ class RuteController extends Controller
                 'kota_tujuan' => $request->kota_tujuan,
                 'jam_berangkat' => $request->jam_berangkat,
                 'jam_tiba' => $request->jam_tiba,
-                'seat' => $request->seat,
                 'tarif' => $request->tarif,
                 'titik_pemberangkatan' => $request->titik_pemberangkatan,
             ]);
@@ -118,9 +116,8 @@ class RuteController extends Controller
                 'kota_tujuan' => ['required', 'string','min:3', 'max:255'],
                 'jam_berangkat' => ['required', 'date',],
                 'jam_tiba' => ['required', 'date'],
-                'seat' => ['required', 'string'],
                 'tarif' => ['required', 'string'],
-                 'titik_pemberangkatan' => ['required', 'string'],
+                'titik_pemberangkatan' => ['required', 'string'],
         ]);
 
         // Update the rute instance with the validated data

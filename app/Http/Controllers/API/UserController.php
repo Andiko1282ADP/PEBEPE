@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException as IlluminateValidationException;
+use Laravel\Fortify\Contracts\LoginViewResponse as LoginViewResponseContract;
 
 class UserController extends Controller
 {
@@ -40,6 +41,14 @@ class UserController extends Controller
             ];
             return response()->json($res, 500);
         }
+    }
+
+    
+
+    public function toResponse($request)
+    {
+        // Return the login view, you can customize this as needed
+        return view('auth.login');
     }
 
     public function register(Request $request)
@@ -122,5 +131,16 @@ class UserController extends Controller
             ],
             200,
         );
+    }
+    public function index()
+    {
+        $users = User::all();
+       if ($users) {
+        return response()->json(
+            ['code' => 200, 'message' => 'Data Dapat Terlihat', 'data' => $users],
+            200,
+        );  } else {
+            return response()->json(['message' => 'Something went wrong'], 500);
+        }
     }
 }

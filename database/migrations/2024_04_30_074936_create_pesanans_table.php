@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('status');
             $table->string('kode_booking');
             $table->string('waktu_pesan');
+            $table->string('seat');
             $table->string('total_tagihan');
             $table->timestamps();
         });

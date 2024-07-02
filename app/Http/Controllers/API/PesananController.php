@@ -15,7 +15,7 @@ class PesananController extends Controller
     public function index()
     {
         // Retrieve all pesanan records from the database
-        $pesanans = pesanan::with(['users', 'metode_pembayarans','pembayarans'])->get();
+        $pesanans = pesanan::with(['users', 'metode_pembayarans','pembayarans','rutes'])->get();
 
         // Return a view with the retrieved pesanan records
        if ($pesanans) {
@@ -48,6 +48,7 @@ class PesananController extends Controller
             'status' => ['required', 'string'],
             'waktu_pesan' => ['required', 'string'],
             'total_tagihan' => ['required', 'string'],
+            'seat' => ['required', 'string'],
         ]);
 
         $pesanan = pesanan::create([
@@ -57,6 +58,7 @@ class PesananController extends Controller
             'waktu_pesan' => $request->waktu_pesan,
             'total_tagihan' => $request->total_tagihan,
             'kode_booking' => $request->kode_booking,
+            'seat' => $request->seat,
             'user_id' => $user_id, // Assigning the user_id here
             'rute_id' => $request->rute_id,
             'metode_pembayaran_id' => $request->metode_pembayaran_id,
@@ -109,6 +111,7 @@ class PesananController extends Controller
                 'status' => ['required', 'string'],
                 'waktu_pesan' => ['required', 'string'],
                 'total_tagihan' => ['required', 'string'],
+                'seat' => ['required', 'string'],
             ]);
     
             // Update the pesanan instance with the validated data

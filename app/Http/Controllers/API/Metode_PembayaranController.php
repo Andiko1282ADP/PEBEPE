@@ -45,7 +45,6 @@ class Metode_PembayaranController extends Controller
             'jenis_pembayaran' => ['required', 'string'],
             'bank' => ['required', 'string'],
             'status' => ['required', 'string'],
-            'tanggal_pembayaran' => ['required', 'string'],
         ]);
 
         $metode_pembayarans = metode_pembayaran::create($validatedData);
@@ -111,7 +110,6 @@ class Metode_PembayaranController extends Controller
             'jenis_pembayaran' => ['required', 'string'],
             'bank' => ['required', 'string'],
             'status' => ['required', 'string'],
-            'tanggal_pembayaran' => ['required', 'string'],
         ]);
 
         // Update the metode_pembayaran instance with the validated data

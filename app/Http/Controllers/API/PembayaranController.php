@@ -6,9 +6,8 @@ use Exception;
 use App\Models\pembayaran;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException as IlluminateValidationException;
-use Illuminate\Http\Response; // Add this line
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Response;
 
 class PembayaranController extends Controller
 {
@@ -17,22 +16,21 @@ class PembayaranController extends Controller
      */
     public function index()
     {
-        $pembayarans = pembayaran::all();
-       if ($pembayarans) {
-        return response()->json(
-            ['code' => 200, 'message' => 'Data Dapat Terlihat', 'data' => $pembayarans],
-            200,
-        );  } else {
-            return response()->json(['message' => 'Something went wrong'], 500);
+        try {
+            $pembayarans = pembayaran::all();
+            foreach ($pembayarans as $pembayaran) {
+                if ($pembayaran->image) {
+                    $pembayaran->image = base64_encode($pembayaran->image);
+                }
+            }
+            return response()->json([
+                'code' => Response::HTTP_OK,
+                'message' => 'Data retrieved successfully',
+                'data' => $pembayarans,
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Something went wrong: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -46,23 +44,26 @@ class PembayaranController extends Controller
             ]);
 
             if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('images', 'public');
-                $validatedData['image'] = $imagePath;
+                $imageFile = $request->file('image');
+                $imageName = time().'.'.$imageFile->extension();  
+                $imageFile->move(public_path('images'), $imageName);
+                $validatedData['image'] = $imageName;
             }
 
             $pembayaran = pembayaran::create($validatedData);
 
             return response()->json([
                 'code' => Response::HTTP_CREATED,
-                'message' => 'Data berhasil disimpan',
+                'message' => 'Data saved successfully',
                 'data' => $pembayaran,
             ], Response::HTTP_CREATED);
-        } catch (IlluminateValidationException $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'Validation error: ' . $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Server error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
     /**
      * Display the specified resource.
      */
@@ -70,21 +71,17 @@ class PembayaranController extends Controller
     {
         try {
             $pembayaran = pembayaran::findOrFail($id);
+            if ($pembayaran->image) {
+                $pembayaran->image = base64_encode($pembayaran->image);
+            }
             return response()->json([
                 'code' => Response::HTTP_OK,
-                'message' => 'Pembayaran retrieved successfully',
+                'message' => 'Data retrieved successfully',
                 'data' => $pembayaran,
             ], Response::HTTP_OK);
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Data not found: ' . $e->getMessage()], Response::HTTP_NOT_FOUND);
         }
-    }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
@@ -98,26 +95,25 @@ class PembayaranController extends Controller
             ]);
 
             if ($request->hasFile('image')) {
-                // Delete the old image if it exists
-                if ($pembayaran->image) {
-                    Storage::disk('public')->delete($pembayaran->image);
-                }
-                $imagePath = $request->file('image')->store('images', 'public');
-                $validatedData['image'] = $imagePath;
+                $imageFile = $request->file('image');
+                $imageName = time().'.'.$imageFile->extension();  
+                $imageFile->move(public_path('images'), $imageName);
+                $validatedData['image'] = $imageName;
             }
 
             $pembayaran->update($validatedData);
 
             return response()->json([
                 'code' => Response::HTTP_OK,
-                'message' => 'Data berhasil diperbarui',
+                'message' => 'Data updated successfully',
                 'data' => $pembayaran,
             ], Response::HTTP_OK);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'Validation error: ' . $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Server error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -126,17 +122,14 @@ class PembayaranController extends Controller
     {
         try {
             $pembayaran = pembayaran::findOrFail($id);
-
-            // Delete the image if it exists
-            if ($pembayaran->image) {
-                Storage::disk('public')->delete($pembayaran->image);
-            }
-
             $pembayaran->delete();
 
-            return response()->json(['message' => 'Pembayaran deleted successfully'], Response::HTTP_OK);
+            return response()->json([
+                'code' => Response::HTTP_OK,
+                'message' => 'Data deleted successfully',
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['message' => 'Server error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

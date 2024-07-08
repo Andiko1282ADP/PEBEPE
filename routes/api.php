@@ -9,6 +9,11 @@ use App\Http\Controllers\API\PembayaranController;
 use App\Http\Controllers\API\Detail_PesananController;
 use App\Http\Controllers\API\Metode_PembayaranController;
 
+
+// AND IMPORT CONTROLLER
+use App\Http\Controllers\Simple;
+
+Route::get('/data', [Simple::class,'index']);
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,10 +32,11 @@ Route::post('login', [UserController::class, 'login']);
 
  //pesanan
  Route::get('pesanan', [PesananController::class, 'index']);
- Route::post('pesanan/store', [PesananController::class, 'store'])->middleware(['auth:sanctum']);
+ Route::post('pesanan/store', [PesananController::class, 'store']);
  Route::post('pesanan/update/{id}', [PesananController::class, 'update']);
  Route::get('pesanan/show/{id}', [PesananController::class, 'show']);
  Route::get('pesanan/destroy/{id}', [PesananController::class, 'destroy']);
+ 
 
 //rute
 Route::get('rute', [RuteController::class, 'index']);
@@ -40,11 +46,10 @@ Route::get('rute/show/{id}', [RuteController::class, 'show']);
 Route::get('rute/destroy/{id}', [RuteController::class, 'destroy']);
 
 //pembayaran
-Route::get('pembayaran', [PembatalanController::class, 'index']);
-Route::post('pembayaran/store', [PembatalanController::class, 'store']);
-Route::post('pembayaran/update/{id}', [PembatalanController::class, 'update']);
-Route::get('pembayaran/show/{id}', [PembatalanController::class, 'show']);
-Route::get('pembayaran/destroy/{id}', [PembatalanController::class, 'destroy']);
+Route::get('pembayaran', [PembayaranController::class, 'index']);
+Route::post('pembayaran/store', [PembayaranController::class, 'store']);
+Route::post('pembayaran/update/{id}', [PembayaranController::class, 'update']);
+Route::get('pembayaran/destroy/{id}', [PembayaranController::class, 'destroy']);
 
 //detail_pesanan
 Route::get('detail_pesanan', [Detail_PesananController::class, 'index']);
@@ -55,18 +60,17 @@ Route::get('detail_pesanan/destroy/{id}', [Detail_PesananController::class, 'des
 
 //metode_pembayaran
 Route::get('metode_pembayaran', [Metode_PembayaranController::class, 'index']);
-Route::post('metode_pembayaran', [Metode_PembayaranController::class, 'store']);
+Route::post('metode_pembayaran/store', [Metode_PembayaranController::class, 'store']);
 Route::post('metode_pembayaran/update/{id}', [Metode_PembayaranController::class, 'update']);
 Route::get('metode_pembayaran/show/{id}', [Metode_PembayaranController::class, 'show']);
 Route::get('metode_pembayaran/destroy/{id}', [Metode_PembayaranController::class, 'destroy']);
 
-
-
+//middleware
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::get('user', [UserController::class, 'fetch']);
     Route::post('user', [UserController::class, 'updateProfile']);
     Route::post('logout', [UserController::class, 'logout']);
-
+    
 
 });
 

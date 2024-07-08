@@ -17,6 +17,7 @@ class pesanan extends Model
         'kode_booking',
         'waktu_pesan',
         'total_tagihan',
+        'seat',
         'user_id',
         'metode_pembayaran_id',
         'rute_id',

@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('kota_tujuan');
             $table->string('jam_berangkat');
             $table->string('jam_tiba');
-            $table->string('seat');
             $table->string('tarif');
             $table->string('titik_pemberangkatan');
             $table->timestamps();

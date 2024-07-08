@@ -24,13 +24,13 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('rute_id');
             $table->unsignedBigInteger('metode_pembayaran_id');
-            $table->string('jumlah_orang');
+            $table->string('jumlah_orang',5);
             $table->date('tanggal_pergi');
-            $table->string('status');
-            $table->string('kode_booking');
+            $table->string('status',10);
+            $table->string('kode_booking',10);
             $table->string('waktu_pesan');
-            $table->string('seat');
-            $table->string('total_tagihan');
+            $table->string('seat',10);
+            $table->string('total_tagihan',20);
             $table->timestamps();
         });
     }

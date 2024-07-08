@@ -17,9 +17,9 @@ return new class extends Migration
             
             $table->id();
             // $table->unsignedBigInteger('pesanan_id');
-            $table->string('jenis_pembayaran');
-            $table->string('bank');
-            $table->string('status');
+            $table->string('jenis_pembayaran',10);
+            $table->string('bank',10);
+            $table->string('status',10);
             $table->timestamps();
         });
     }

@@ -37,10 +37,13 @@ class PesananController extends Controller
     public function store(Request $request)
 {
     try {
-        $user_id = auth()->id();
-        if (!$user_id) {
+        if (!auth()->check()) {
             return response()->json(['message' => 'User tidak terotentikasi'], 401);
         }
+
+        // Retrieve authenticated user's ID
+        $user_id = auth()->id();
+
 
         $validatedData = $request->validate([
             'jumlah_orang' => ['required', 'string'],

@@ -12,124 +12,171 @@ use Illuminate\Http\Response;
 class PembayaranController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan semua pembayaran.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        try {
-            $pembayarans = pembayaran::all();
-            foreach ($pembayarans as $pembayaran) {
-                if ($pembayaran->image) {
-                    $pembayaran->image = base64_encode($pembayaran->image);
-                }
-            }
-            return response()->json([
-                'code' => Response::HTTP_OK,
-                'message' => 'Data retrieved successfully',
-                'data' => $pembayarans,
-            ], Response::HTTP_OK);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'Something went wrong: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        $pembayarans = pembayaran::all();
+        if ($pembayarans) {
+        return response()->json(
+            ['code' => 200, 'message' => 'Data Dapat Terlihat', 'data' => $pembayarans],
+            200,
+        );  } else {
+            return response()->json(['message' => 'Something went wrong'], 500);
         }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menampilkan formulir untuk membuat pembayaran baru.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Menyimpan pembayaran yang baru dibuat ke dalam database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         try {
             $validatedData = $request->validate([
-                'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
+              'nama_transfer' => ['required','string'],
+            'nomor_rekening' => ['required','string'],
+            'bank_transfer' => ['required','string'],
+            'jam_transfer' => ['required','string'],
+            'nominal_transfer' => ['required','string'],
             ]);
-
-            if ($request->hasFile('image')) {
-                $imageFile = $request->file('image');
-                $imageName = time().'.'.$imageFile->extension();  
-                $imageFile->move(public_path('images'), $imageName);
-                $validatedData['image'] = $imageName;
+    
+            $pembayarans = pembayaran::create($validatedData);
+    
+            if ($pembayarans) {
+                return response()->json([
+                    'code' => 200,
+                    'message' => 'Data berhasil disimpan',
+                    'data' => $pembayarans,
+                ], 200);
+            } else {
+                return response()->json(['message' => 'Gagal menyimpan data'], 500);
             }
-
-            $pembayaran = pembayaran::create($validatedData);
-
-            return response()->json([
-                'code' => Response::HTTP_CREATED,
-                'message' => 'Data saved successfully',
-                'data' => $pembayaran,
-            ], Response::HTTP_CREATED);
-        } catch (ValidationException $e) {
-            return response()->json(['message' => 'Validation error: ' . $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'Server error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan detail pembayaran.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
     public function show(string $id)
     {
         try {
+            // Find the pembayaran by its ID
             $pembayaran = pembayaran::findOrFail($id);
-            if ($pembayaran->image) {
-                $pembayaran->image = base64_encode($pembayaran->image);
+    
+            // Check if the pembayaran exists
+            if (!$pembayaran) {
+                return response()->json(['message' => ' pembayaran not found'], 404);
             }
+    
+            // Return the pembayaran data
             return response()->json([
-                'code' => Response::HTTP_OK,
-                'message' => 'Data retrieved successfully',
+                'code' => 200,
+                'message' => 'pembayaran retrieved successfully',
                 'data' => $pembayaran,
-            ], Response::HTTP_OK);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'Data not found: ' . $e->getMessage()], Response::HTTP_NOT_FOUND);
+            ], 200);
+        } catch (\Exception $e) {
+            // Handle any exceptions and return an error response
+            return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+    /**
+     * Menampilkan formulir untuk mengedit pembayaran.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        
+//
     }
 
     /**
-     * Update the specified resource in storage.
+     * Memperbarui pembayaran yang ada di database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, pembayaran $pembayaran)
     {
         try {
             $validatedData = $request->validate([
-                'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
-            ]);
-
-            if ($request->hasFile('image')) {
-                $imageFile = $request->file('image');
-                $imageName = time().'.'.$imageFile->extension();  
-                $imageFile->move(public_path('images'), $imageName);
-                $validatedData['image'] = $imageName;
-            }
-
+                'nama_transfer' => ['required','string'],
+                'nomor_rekening' => ['required','string'],
+                'bank_transfer' => ['required','string'],
+                'jam_transfer' => ['required','string'],
+                'nominal_transfer' => ['required','string'],
+                ]);
+    
+            // Update the pembayaran instance with the validated data
             $pembayaran->update($validatedData);
-
-            return response()->json([
-                'code' => Response::HTTP_OK,
-                'message' => 'Data updated successfully',
-                'data' => $pembayaran,
-            ], Response::HTTP_OK);
-        } catch (ValidationException $e) {
-            return response()->json(['message' => 'Validation error: ' . $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'Server error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+    
+            // Retrieve the updated pembayaran
+            $updatedPembayaran = pembayaran::find($pembayaran->id);
+    
+            if ($updatedPembayaran) {
+                return response()->json([
+                    'code' => 200,
+                    'message' => 'Data berhasil diperbarui',
+                    'data' => $updatedPembayaran,
+                ], 200);
+            } else {
+                return response()->json(['message' => 'Gagal memperbarui data'], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus pembayaran dari database.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
     public function destroy(string $id)
     {
         try {
+            // Find the pembayaran by its ID
             $pembayaran = pembayaran::findOrFail($id);
+    
+            // Check if the embayaran exists
+            if (!$pembayaran) {
+                return response()->json(['message' => 'pembayaran not found'], 404);
+            }
+    
+            // Delete the pembayaran
             $pembayaran->delete();
-
-            return response()->json([
-                'code' => Response::HTTP_OK,
-                'message' => 'Data deleted successfully',
-            ], Response::HTTP_OK);
-        } catch (Exception $e) {
-            return response()->json(['message' => 'Server error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+    
+            // Return a success response
+            return response()->json(['message' => ' pembayaran deleted successfully'], 200);
+        } catch (\Exception $e) {
+            // Handle any exceptions and return an error response
+            return response()->json(['message' => $e->getMessage()], 500);
         }
+
     }
 }

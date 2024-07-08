@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('metode_pembayarans', function (Blueprint $table) {
-            
-            // $table->foreign('pesanan_id')->references('id')->on('pesanans');
-            
+        Schema::create('pembayarans', function (Blueprint $table) {
             $table->id();
-            // $table->unsignedBigInteger('pesanan_id');
-            $table->string('jenis_pembayaran',10);
-            $table->string('bank',10);
-            $table->string('status',10);
+            $table->string('nama_transfer');
+            $table->string('nomor_rekening');
+            $table->string('bank_transfer');
+            $table->string('jam_transfer');
+            $table->string('nominal_transfer');
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('metode_pembayarans');
+        Schema::dropIfExists('pembayarans');
     }
 };

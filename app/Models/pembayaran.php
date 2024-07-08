@@ -11,7 +11,11 @@ class pembayaran extends Model
     protected $table = "pembayarans";
     protected $fillable =
     [
-        'image'
+        'nama_transfer',
+        'bank_transfer',
+        'nomor_rekening',
+        'jam_transfer',
+        'nominal_transfer',
     ];
 
     public function pesanan()

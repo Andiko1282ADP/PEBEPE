@@ -37,10 +37,7 @@ class PesananController extends Controller
     public function store(Request $request)
 {
     try {
-        $user_id = auth()->id();
-        if (!$user_id) {
-            return response()->json(['message' => 'User tidak terotentikasi'], 401);
-        }
+    
 
         $validatedData = $request->validate([
             'jumlah_orang' => ['required', 'string'],
@@ -59,7 +56,7 @@ class PesananController extends Controller
             'total_tagihan' => $request->total_tagihan,
             'kode_booking' => $request->kode_booking,
             'seat' => $request->seat,
-            'user_id' => $user_id, // Assigning the user_id here
+            'user_id' => $request->user_id, // Assigning the user_id here
             'rute_id' => $request->rute_id,
             'metode_pembayaran_id' => $request->metode_pembayaran_id,
             'pembayaran_id' => $request->pembayaran_id

@@ -37,7 +37,6 @@ class PesananController extends Controller
     public function store(Request $request)
 {
     try {
-    
 
         $validatedData = $request->validate([
             'jumlah_orang' => ['required', 'string'],

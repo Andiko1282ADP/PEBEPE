@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('waktu_pesan');
             $table->string('seat',10);
             $table->string('total_tagihan',20);
+
             $table->timestamps();
         });
     }

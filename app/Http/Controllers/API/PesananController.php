@@ -98,9 +98,10 @@ class PesananController extends Controller
     }
 
     // Update the specified resource in storage.
-    public function update(Request $request, Pesanan $pesanan)
+    public function update(Request $request, $id)
     {
         try {
+            // Validate incoming request data
             $validatedData = $request->validate([
                 'jumlah_orang' => ['required', 'string'],
                 'tanggal_pergi' => ['required', 'date'],
@@ -110,25 +111,28 @@ class PesananController extends Controller
                 'seat' => ['required', 'string'],
             ]);
     
-            // Update the pesanan instance with the validated data
+            // Find the Pesanan instance by ID
+            $pesanan = Pesanan::find($id);
+    
+            if (!$pesanan) {
+                return response()->json(['message' => 'Pesanan tidak ditemukan'], 404);
+            }
+    
+            // Update the Pesanan instance with the validated data
             $pesanan->update($validatedData);
     
-            // Retrieve the updated pesanan
-            $updatedpesanan = pesanan::find($pesanan->id);
+            // Return the updated Pesanan instance
+            return response()->json([
+                'code' => 200,
+                'message' => 'Data berhasil diperbarui',
+                'data' => $pesanan, // Return $pesanan directly after update
+            ], 200);
     
-            if ($updatedpesanan) {
-                return response()->json([
-                    'code' => 200,
-                    'message' => 'Data berhasil diperbarui',
-                    'data' => $updatedpesanan,
-                ], 200);
-            } else {
-                return response()->json(['message' => 'Gagal memperbarui data'], 500);
-            }
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+    
 
     // Remove the specified resource from storage.
     public function destroy(pesanan $pesanan)
